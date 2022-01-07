@@ -1,0 +1,65 @@
+module tb_async_fifo;
+reg wr_clk,rd_clk;
+reg[7:0] data_in;
+wire[7:0] data_out;
+wire rd_empty,wr_full;
+reg reset_w;
+reg reset_r;
+reg write_enable,read_enable;
+wire memo;
+assign memo=dut.fifo_mem_rd_wr.fifo_mem;
+async_fifo dut(rd_clk,wr_clk,reset_r,reset_w,read_enable,write_enable,data_in,data_out,wr_full,rd_empty);
+initial
+begin
+#0data_in=8'h0;
+#50 data_in=8'd10; // DATA WHICH IS SUPPLIED
+#50 data_in=8'd20;
+#50 data_in=8'd30;
+#50 data_in=8'd40;
+#50 data_in=8'd50;
+#50 data_in=8'd60;
+#50 data_in=8'd70;
+#50 data_in=8'd80;
+#50 data_in=8'd90;
+#50 data_in=8'd100;
+#50 data_in=8'd110;
+#50 data_in=8'd120;
+#50 data_in=8'd130;
+#50 data_in=8'd140;
+#50 data_in=8'd150;
+#50 data_in=8'd160;
+#50 data_in=8'd170;
+end
+
+initial
+begin
+ wr_clk=1'b0;
+  rd_clk=1'b0;
+ write_enable=1'b0;
+read_enable=1'b0;
+reset_r=1'b0;
+reset_w =1'b0;
+ end
+ 
+always begin #30 wr_clk=~wr_clk;end // READ AND WRITE CLOCK GENERATION
+
+ always
+ #20 rd_clk=~rd_clk;
+ 
+ initial
+ #10 reset_r=1'b1;
+ 
+ initial
+ #5 reset_w=1'b1;
+initial
+
+ #10 write_enable=1'b1;
+ initial
+ # 5000 read_enable=1'b1;
+ //initial
+ //begin
+ //#10000 $finish; end
+ initial
+ $monitor( "$time data_out,empty ,full= %d %d %d",data_out,rd_empty,wr_full);
+
+endmodule

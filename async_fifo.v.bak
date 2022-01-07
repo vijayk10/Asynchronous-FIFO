@@ -1,0 +1,13 @@
+module async_fifo#(parameter addr_size=4,data_size=8)
+						(input rd_clk,wr_clk,rrst,wrst,rd_en,wr_en,input[data_size-1:0]wr_data,
+						  output [data_size-1:0]data_out,output full,empty);
+						  
+wire wfullen;
+wire [addr_size-1:0]wr_addr,rd_addr;
+wire [addr_size:0]wr_ptr;
+
+assign wfullen=wr_en & full;//write on fifo when mem is not full and wr_en is high
+
+gray_ptr wr_gray(wr_clk,wrst, wfullen,wr_ptr,wr_addr);//for counting write pointer
+gray_ptr rd_gray(rd_clk,rrst, rd_en,rd_ptr,rd_addr);
+fifo_mem_rd_wr mem1(wr_clk,wfullen,rd_en,wr_addr,rd_addr,wr_data,data_out);
